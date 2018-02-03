@@ -87,6 +87,9 @@ dd img {
 code {
 	font-family: menlo, monospace;
 	font-size: 0.8em;
+	display: inline-block;
+	background: #ddd;
+	padding: 2px;
 }
 
 header {
@@ -125,7 +128,7 @@ header {
 @media (min-width: 746px) {
 
 	#page {
-		padding: 30px 0;
+		padding: 30px 0 60px 0;
 	}
 
 	h1 {
