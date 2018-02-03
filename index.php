@@ -72,6 +72,7 @@ if (! empty($url) && preg_match($regex, $url, $matches)) {
 	<title>Facebook contacts export</title>
 	<link rel="stylesheet" href="css/source-sans-pro/source-sans-pro.css">
 	<link rel="stylesheet" href="css/facebook-export.css">
+	<link rel="shortcut icon" href="favicon.png">
 </head>
 <body>
 	<header>
@@ -100,6 +101,8 @@ if (! empty($url) && preg_match($regex, $url, $matches)) {
 				</ol>
 				<img src="img/copy.gif" alt="Copy Birthdays URL">
 			</dd>
+			<dt>I tried to navigate to the Birthday Events page and I don’t see the link?</dt>
+			<dd>All I can say is <em>Facebook is designed like a shopping mall</em>. You are meant to get lost and distracted, and maybe buy some stuff you didn’t plan on buying. So you may want to just click on <a href="https://www.facebook.com/events/">this link</a>, and avoid the twisty navigation choices. Then scroll down to find the little calendar link in the sidebar.</dd>
 			<dt>What data is included in the CSV?</dt>
 			<dd>The export file includes 3 columns: <code>facebook_id</code>, <code>name</code>, <code>birthday</code>.</dd>
 			<dt>Is the export filename meaningful?</dt>
