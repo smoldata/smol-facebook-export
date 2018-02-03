@@ -110,7 +110,7 @@ if (! empty($url) && preg_match($regex, $url, $matches)) {
 			<dt>Do you keep a copy of my contacts?</dt>
 			<dd>No.</dd>
 			<dt>Why do the birthdays start with <code>uuuu</code>?</dt>
-			<dd>It’s a convention from the <a href="https://www.loc.gov/standards/datetime/">EDTF date standard</a>.</dd>
+			<dd>It’s a convention from the <a href="https://www.loc.gov/standards/datetime/">EDTF date standard</a>. Basically it stands for an <em>unknown year<em>, since the birthday calendar only shows the <em>next</em> birthday for each of your friends.</dd>
 			<dt>Why would I want to export my contacts?</dt>
 			<dd>They are possibly the most valuable part of your Facebook account, and you should have your own copy of the data.</dd>
 			<dt>Why don’t the number of exported contacts match the number of friends I have on Facebook?</dt>
