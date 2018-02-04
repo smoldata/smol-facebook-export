@@ -1,67 +1,29 @@
 <?php
 
+date_default_timezone_set('UTC');
+
+require_once 'include/lib_facebook_ical.php';
+require_once 'include/lib_output.php';
+
+$esc_url = '';
+$esc_response = '';
+
 if (! empty($_REQUEST['url'])) {
 	$url = trim($_REQUEST['url']);
-}
+	$esc_url = htmlentities($url);
+	$rsp = facebook_ical_birthdays($url);
 
-$regex = '|^webcal://www\.facebook\.com/ical/b\.php\?uid=(\d+)&key=(\w+)$|';
-if (! empty($url) && preg_match($regex, $url, $matches)) {
-
-	$uid = $matches[1];
-	$key = $matches[2];
-
-	header('Content-Type: text/csv');
-	header("Content-Disposition: attachment; filename=\"facebook_export_$uid.csv\"");
-
-	$out = fopen('php://output', 'w');
-
-	$ch = curl_init();
-	$url = "https://www.facebook.com/ical/b.php?uid=$uid&key=$key";
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-	curl_setopt($ch, CURLOPT_USERAGENT, 'Mac+OS+X/10.11.6 (15G19009) Calendar/2092.3');
-	$cal = curl_exec($ch);
-	curl_close($ch);
-
-	$cal_contacts = explode('BEGIN:VEVENT', $cal);
-
-	fputcsv($out, array(
-		'facebook_id',
-		'name',
-		'birthday'
-	));
-
-	foreach ($cal_contacts as $index => $cc) {
-
-		$regex = '|DTSTART:\d\d\d\d(\d\d)(\d\d)|';
-		if (preg_match($regex, $cc, $matches)) {
-			$birthday = "uuuu-{$matches[1]}-{$matches[2]}";
-		}
-
-		$regex = '|SUMMARY:(.+)\'s birthday|';
-		if (preg_match($regex, $cc, $matches)) {
-			$name = $matches[1];
-		}
-
-		$regex = '|UID:b(\d+)@facebook\.com|';
-		if (preg_match($regex, $cc, $matches)) {
-			$id = $matches[1];
-		}
-
-		if (! empty($id) && ! empty($name) && ! empty($birthday)) {
-			fputcsv($out, array(
-				$id,
-				$name,
-				$birthday
-			));
+	if (! empty($rsp['ok'])) {
+		$user_id = $rsp['user_id'];
+		$contacts = $rsp['contacts'];
+		$filename = "facebook_export_$user_id.csv";
+		output_csv($contacts, $filename, 'with headers');
+	} else {
+		$esc_response = 'Oops, something unexpected went wrong!';
+		if (! empty($rsp['error'])) {
+			$esc_response = htmlentities($rsp['error']);
 		}
 	}
-
-	// All done!
-	exit;
 }
 
 ?>
@@ -79,7 +41,7 @@ if (! empty($url) && preg_match($regex, $url, $matches)) {
 		<h1>Facebook contacts export</h1>
 	</header>
 	<div id="page">
-		<p><em>This page is not associated with, or endorsed by, Facebook.</em></p>
+		<p><em>This page is not associated with or endorsed by Facebook.</em></p>
 		<p>This form lets you download a CSV file of your contacts on Facebook. Yes, you can generate a similar export by <a href="https://www.facebook.com/help/131112897028467">requesting an official archive</a> of your account, but the contact list <em>only includes names</em>.</p>
 		<p>Having your contacts’ names is good, but you can’t really do anything useful with the data. This form generates a CSV that includes names, birthdays, and Facebook ID numbers. Those numeric ID numbers can be used to rebuild your social graph network somewhere else.</p>
 		<p>Nothing gets saved on the server, and the code is available on <a href="https://github.com/smoldata/smol-facebook-export">GitHub</a>.</p>
@@ -87,8 +49,15 @@ if (! empty($url) && preg_match($regex, $url, $matches)) {
 			<label for="id">
 				Facebook Birthdays calendar URL
 			</label>
-			<input type="text" name="url" id="url" placeholder="webcal://www.facebook.com/ical/b.php?uid=xxx&key=yyy">
+			<input type="text" name="url" id="url" value="<?php echo $esc_url; ?>" placeholder="webcal://www.facebook.com/ical/b.php?uid=xxx&key=yyy">
 			<input type="submit" class="btn" value="Download">
+			<?php
+
+			if (! empty($esc_response)) {
+				echo "<div class=\"response\">$esc_response</div>";
+			}
+
+			?>
 		</form>
 		<hr>
 		<h2>Questions</h2>

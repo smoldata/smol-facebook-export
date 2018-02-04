@@ -125,6 +125,12 @@ header {
 	border-color: #000;
 }
 
+.response {
+	color: #f30;
+	margin-top: 15px;
+	font-weight: 600;
+}
+
 @media (min-width: 746px) {
 
 	#page {
